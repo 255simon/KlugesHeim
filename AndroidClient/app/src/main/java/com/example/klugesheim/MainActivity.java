@@ -24,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
         lightButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
                 if(isChecked) {
-                    sendMessage("ON");
+                    sendMessage("pilight-send -p clarus_switch -i A3 -u 20 --on");
                 }
                 else{
-                    sendMessage("OFF");
+                    sendMessage("pilight-send -p clarus_switch -i A3 -u 20 --off");
                 }
             }
         });
