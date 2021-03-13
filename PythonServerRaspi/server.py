@@ -11,7 +11,10 @@ def find_protocol(data):
 
 def find_id(data):
     data_list = data.split(" ")
-    return data_list[data_list.index("-i") + 1]
+    id = data_list[data_list.index("-i") + 1]
+    if(id.isdecimal()):
+        id = int(id) 
+    return id
 
 def find_unitcode(data):
     data_list = data.split(" ")
