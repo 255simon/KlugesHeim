@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         thread.start();
     }
-    private String host = "192.168.2.200";    //insert server ip here
+    private String host = "";    //insert server ip here
     private int port = 2048;
     BufferedReader in;
 }
