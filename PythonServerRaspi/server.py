@@ -10,6 +10,7 @@ PORT = 2048
 BUFF_SIZE = 4096
 
 rec_message = False
+client_sock = None
 
 def find_protocol(data):
     data_list = data.split(" ")
@@ -59,28 +60,32 @@ def handle(data):
     print(data)
     with open("tempdata.json", "w") as f:
         f.write(json.dumps(data))
-        #json.dump(data, f)y
         rec_message = True
 
-def scan(client_sock, pilight_connect):
+def scan(client_sock):
+
+    print("bin in scan")
     global rec_message
 
     print(os.getcwd())
 
-    pilight_connect.set_callback(handle)
-    pilight_connect.start()
+    pilight_receiver = pilight.Client(host = "127.0.0.1", port = 5000)
+    pilight_receiver.set_callback(handle)
+    pilight_receiver.start()
 
     start_time = time()
     ref_time = 20
     delta_time = 0
     while not rec_message and delta_time < ref_time:
         delta_time = time() - start_time
-    pilight_connect.stop()
+    pilight_receiver.stop()
     rec_message = False
+    print("received message")
 
     with open(os.getcwd() + "/" + "tempdata.json", "r") as f:
         try:
             data = json.load(f)
+            print("loaded data")
         except:
             try:
                 client_sock.send("pilight received nothing".encode("UTF-8"))
@@ -141,7 +146,7 @@ def scan(client_sock, pilight_connect):
 
 
 def main():
-    pilight_connect = pilight.Client(host = "127.0.0.1", port = 5000)
+    pilight_transmitter = pilight.Client(host = "127.0.0.1", port = 5000)
 
     terminate = False
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -159,9 +164,9 @@ def main():
             terminate = True
             print("terminate server")
         elif(data == "scan"):
-            scan(client_sock, pilight_connect)
+            scan(client_sock)
         else:
-            pilight_connect.send_code(format_data(data))
+            pilight_transmitter.send_code(format_data(data))
         client_sock.close()
 
     sock.close()
