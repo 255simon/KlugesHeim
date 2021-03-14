@@ -22,6 +22,13 @@ def find_id(data):
         id = int(id) 
     return id
 
+def find_syscode(data):
+    data_list = data.split(" ")
+    syscode = data_list[data_list.index("-s") + 1]
+    if(syscode.isdecimal()):
+        syscode = int(syscode) 
+    return syscode
+
 def find_unitcode(data):
     data_list = data.split(" ")
     return int(data_list[data_list.index("-u") + 1] )
@@ -34,10 +41,18 @@ def find_command(data):
 
 
 def format_data(data):
-    protocol = find_protocol(data)
-    id = find_id(data)
-    ucode = find_unitcode(data)
-    return {"protocol" :[protocol], "id" : id, "unit" : ucode, find_command(data) : 1} 
+    return_dict = {} 
+    return_dict["protocol"] = [find_protocol(data)] 
+
+    try:
+        return_dict["id"] = find_id(data)
+    except ValueError:
+        return_dict["systemcode"] = find_syscode(data)
+
+    return_dict["unitcode"] = find_unitcode(data)
+    return_dict[find_command(data)] = 1 
+
+    return return_dict
 
 def handle(data):
     global rec_message
