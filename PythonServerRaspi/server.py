@@ -63,8 +63,6 @@ def handle(data):
         rec_message = True
 
 def scan(client_sock):
-
-    print("bin in scan")
     global rec_message
 
     print(os.getcwd())
@@ -80,18 +78,16 @@ def scan(client_sock):
         delta_time = time() - start_time
     pilight_receiver.stop()
     rec_message = False
-    print("received message")
 
-    with open(os.getcwd() + "/" + "tempdata.json", "r") as f:
-        try:
+    try:
+       with open(os.getcwd() + "/" + "tempdata.json", "r") as f:
             data = json.load(f)
-            print("loaded data")
+    except:
+        try:
+            client_sock.send("pilight received nothing".encode("UTF-8"))
         except:
-            try:
-                client_sock.send("pilight received nothing".encode("UTF-8"))
-            except:
-                pass
-            return
+            pass
+        return
 
     identity = None
     unitcode = None
@@ -159,7 +155,6 @@ def main():
         print(client_addr)
         
         data = client_sock.recv(BUFF_SIZE).decode("UTF-8")
-        print(data)
         if(data == "ciao"):
             terminate = True
             print("terminate server")
