@@ -49,19 +49,23 @@ def format_data(data):
     except ValueError:
         return_dict["systemcode"] = find_syscode(data)
 
-    return_dict["unitcode"] = find_unitcode(data)
+    return_dict["unit"] = find_unitcode(data)
     return_dict[find_command(data)] = 1 
 
     return return_dict
 
 def handle(data):
     global rec_message
+    print(data)
     with open("tempdata.json", "w") as f:
-        f.write(data)
+        f.write(json.dumps(data))
+        #json.dump(data, f)y
         rec_message = True
 
 def scan(client_sock, pilight_connect):
     global rec_message
+
+    print(os.getcwd())
 
     pilight_connect.set_callback(handle)
     pilight_connect.start()
@@ -74,16 +78,15 @@ def scan(client_sock, pilight_connect):
     pilight_connect.stop()
     rec_message = False
 
-    #try to load received message
-    try:
-        data = json.load(os.getcwd() + "tempdata.json")
-    except:
-        #errorhandling if no file was written
+    with open(os.getcwd() + "/" + "tempdata.json", "r") as f:
         try:
-            client_sock.send("pilight received nothing".encode("UTF-8"))
+            data = json.load(f)
         except:
-            pass
-        return 
+            try:
+                client_sock.send("pilight received nothing".encode("UTF-8"))
+            except:
+                pass
+            return
 
     identity = None
     unitcode = None
@@ -91,29 +94,29 @@ def scan(client_sock, pilight_connect):
 
     #try to find id or systemcode
     try:
-        identity = "-i " + data["message"]["id"]
+        identity = "-i " + str(data["message"]["id"])
     except KeyError:
         try:
-            identity = "-s " + data["message"]["systemcode"]
+            identity = "-s " + str(data["message"]["systemcode"])
         except KeyError:
             #errorhandling if no id and no systemcode was found
             try:
                 client_sock.send("no id or systemcode found".encode("UTF-8"))
             except:
                 pass
-            os.remove(os.getcwd + "tempdata.json")
+            os.remove(os.getcwd() + "/" + "tempdata.json")
             return
 
     #try to find unitcode
     try:
-        unitcode = "-u " + data["message"]["unitcode"]
+        unitcode = "-u " + str(data["message"]["unit"])
     except KeyError:
         #errorhandling if no unitcode was found
         try:
             client_sock.send("no unitcode found".encode("UTF-8"))
         except:
             pass
-        os.remove(os.getcwd + "tempdata.json")
+        os.remove(os.getcwd() + "/" + "tempdata.json")
         return
 
     #try to find protocol
@@ -125,12 +128,15 @@ def scan(client_sock, pilight_connect):
             client_sock.send("no protocol found".encode("UTF-8"))
         except:
             pass
-        os.remove(os.getcwd + "tempdata.json")
+        os.remove(os.getcwd() + "/" + "tempdata.json")
         return
 
     sendstring = f"{identity} {unitcode} {protocol}"
-    client_sock.send(sendstring.encode("UTF-8"))
-    os.remove(os.getcwd + "tempdata.json")
+    try:
+        client_sock.send(sendstring.encode("UTF-8"))
+    except:
+        pass
+    os.remove(os.getcwd() + "/" + "tempdata.json")
 
 
 
@@ -148,10 +154,11 @@ def main():
         print(client_addr)
         
         data = client_sock.recv(BUFF_SIZE).decode("UTF-8")
+        print(data)
         if(data == "ciao"):
             terminate = True
             print("terminate server")
-        if(data == "scan"):
+        elif(data == "scan"):
             scan(client_sock, pilight_connect)
         else:
             pilight_connect.send_code(format_data(data))
