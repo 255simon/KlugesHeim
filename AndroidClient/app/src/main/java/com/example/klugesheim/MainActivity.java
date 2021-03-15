@@ -1,3 +1,5 @@
+package com.example.klugesheim;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -39,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
         arrayList.add("up");
         ArrayAdapter<String> myArrayAdapter =
                 new ArrayAdapter<>(
-                  this,
-                  R.layout.list_row,
-                  R.id.textView,
-                  arrayList);
+                        this,
+                        R.layout.list_row,
+                        R.id.textView,
+                        arrayList);
         listView.setAdapter(myArrayAdapter);
     }
     private void sendMessage(final String msg) {
@@ -73,20 +75,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run(){
 
-               try{
-                   Socket sock = new Socket(host, port);
-                   OutputStream outStream = sock.getOutputStream();
-                   PrintWriter output = new PrintWriter(outStream);
-                   output.print("scan");
-                   output.flush();
-                   in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-                   String msg = in.readLine();
-                   //out.setText(msg);
-                   sock.close();
-               }catch(IOException e){
-                   e.printStackTrace();
-               }
-           }
+                try{
+                    Socket sock = new Socket(host, port);
+                    OutputStream outStream = sock.getOutputStream();
+                    PrintWriter output = new PrintWriter(outStream);
+                    output.print("scan");
+                    output.flush();
+                    in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+                    String msg = in.readLine();
+                    //out.setText(msg);
+                    sock.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
 
         });
 
