@@ -26,4 +26,23 @@
         android:text="ToggleButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/light1" />
+
+    <Button
+        android:id="@+id/scan_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="152dp"
+        android:layout_marginTop="220dp"
+        android:text="scan"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_light1" />
+
+    <TextView
+        android:id="@+id/output"
+        android:layout_width="271dp"
+        android:layout_height="139dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scan_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>
