@@ -1,9 +1,11 @@
+package com.example.klugesheim;
+
 public class Switch {
     private String name;
     private String onCommand;
     private String offCommand;
 
-    public void Switch(String name, String command){
+    public Switch(String name, String command){
         this.name = name;
         this.onCommand = command + " --on";
         this.offCommand = command + " --off";
