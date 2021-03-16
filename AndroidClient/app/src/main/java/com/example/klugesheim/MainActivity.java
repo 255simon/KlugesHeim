@@ -25,7 +25,7 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-    static private String host = "192.168.2.200";    //insert server ip here
+    static private String host = "";    //insert server ip here
     static private int port = 2048;
     private String switchKey = "switch_names";
     private String commandKey = "commands";
