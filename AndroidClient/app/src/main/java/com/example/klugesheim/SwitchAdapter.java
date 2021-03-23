@@ -43,38 +43,16 @@ public class SwitchAdapter extends ArrayAdapter<Switch> {
         onButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage(switches.get(position).getOnCommand());
+                Connection.sendMessage(switches.get(position).getOnCommand());
             }
         });
 
         offButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage(switches.get(position).getOffCommand());
+                Connection.sendMessage(switches.get(position).getOffCommand());
             }
         });
         return convertView;
-    }
-
-    private void sendMessage(final String msg) {
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-                    Socket sock = new Socket(MainActivity.getHost(), MainActivity.getPort());
-                    OutputStream out = sock.getOutputStream();
-                    PrintWriter output = new PrintWriter(out);
-                    output.println(msg);
-                    output.flush();
-                    sock.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        thread.start();
     }
 }
