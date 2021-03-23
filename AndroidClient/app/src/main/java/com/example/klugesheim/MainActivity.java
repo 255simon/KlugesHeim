@@ -21,18 +21,6 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPref;
     HashSet<String> listElData;
 
-    private class Command{              //this class is used to modify command string in receive thread
-        private String command;
-
-        public String getCommand() {
-            return command;
-        }
-
-        public void setCommand(String command) {
-            this.command = command;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.listview_activity_main);
         switchList = new ArrayList<Switch>();
 
-        if(sharedPref.contains(listElDataKey)){
+        if (sharedPref.contains(listElDataKey)) {
             Iterator<String> it = sharedPref.getStringSet(listElDataKey, null).iterator();
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 String[] stringArray = it.next().split("/");
                 String switchName = stringArray[0];
                 String command = stringArray[1];
@@ -77,5 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 }
