@@ -41,6 +41,7 @@ public class Connection {
         TextInputLayout textInput = view.findViewById(R.id.name_input_layout);
         final Switch s = new Switch();
         s.setName(textInput.getEditText().getText().toString());
+        textInput.getEditText().getText().clear();
 
         Thread thread = new Thread(new Runnable(){
 
