@@ -28,7 +28,7 @@ public class SwitchAdapter extends ArrayAdapter<Switch> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
-        int phaseIndex = position;
+
         if(convertView == null){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_row,
                     parent, false);

@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     SwitchAdapter switchAdapter;
     SharedPreferences sharedPref;
     HashSet<String> listElData;
+    StorageManager storageManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,25 +28,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-        listElData = new HashSet<String>();
+        storageManager = new StorageManager(sharedPref);
 
         final Button scanButton = findViewById(R.id.scan_button);
 
         ListView listView = (ListView) findViewById(R.id.listview_activity_main);
-        switchList = new ArrayList<Switch>();
-
-        if (sharedPref.contains(listElDataKey)) {
-            Iterator<String> it = sharedPref.getStringSet(listElDataKey, null).iterator();
-            while (it.hasNext()) {
-                String[] stringArray = it.next().split("/");
-                String switchName = stringArray[0];
-                String command = stringArray[1];
-                Switch s = new Switch(switchName, command);
-                switchList.add(s);
-                listElData.add(switchName + "/" + command);
-            }
-        }
-
+        switchList = storageManager.loadData();
         switchAdapter = new SwitchAdapter(getApplicationContext(), switchList);
         listView.setAdapter(switchAdapter);
 
@@ -54,10 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View buttonView) {
                 try {
                     Switch s = Connection.receiveMessage(findViewById(android.R.id.content).getRootView());
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    listElData.add(s.getName() + "/" + s.getCommand());
-                    editor.putStringSet(listElDataKey, listElData);
-                    editor.apply();
+                    storageManager.safeData(s);
                     switchAdapter.add(s);
                     switchAdapter.notifyDataSetChanged();
                 } catch (InterruptedException e) {
