@@ -67,6 +67,10 @@ public class Connection {
         thread.start();
         thread.join();
 
+        if(s.getCommand().split(" ")[0].equals("ERROR!")){
+            FailureSwitch failureSwitch = new FailureSwitch(s.getCommand());
+            return failureSwitch;
+        }
         return s;
     }
 }
