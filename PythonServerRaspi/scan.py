@@ -4,6 +4,10 @@ import os
 from pilight import pilight
 from time import time
 
+PILIGHT_HOST = "127.0.0.1"
+PILIGHT_PORT = 5000
+SAFE_PATH = os.getcwd() + "/" + "tempdata.json"
+
 rec_message = False
 
 def handle(data):
@@ -18,7 +22,7 @@ def scan(client_sock):
 
     print(os.getcwd())
 
-    pilight_receiver = pilight.Client(host = "127.0.0.1", port = 5000)
+    pilight_receiver = pilight.Client(PILIGHT_HOST, PILIGHT_PORT)
     pilight_receiver.set_callback(handle)
     pilight_receiver.start()
 
@@ -31,11 +35,11 @@ def scan(client_sock):
     rec_message = False
 
     try:
-       with open(os.getcwd() + "/" + "tempdata.json", "r") as f:
+       with open(SAFE_PATH, "r") as f:
             data = json.load(f)
     except:
         try:
-            client_sock.send("pilight received nothing".encode("UTF-8"))
+            client_sock.send("ERROR!\npilight received nothing".encode("UTF-8"))
         except:
             pass
         return
@@ -44,48 +48,53 @@ def scan(client_sock):
     unitcode = None
     protocol = None
 
-    #try to find id or systemcode
-    try:
-        identity = "-i " + str(data["message"]["id"])
-    except KeyError:
+    if "message" not in data.keys():
         try:
-            identity = "-s " + str(data["message"]["systemcode"])
-        except KeyError:
-            #errorhandling if no id and no systemcode was found
+            client_sock.send("ERROR!\nInvalid protocol. No message section found.".encode("UTF-8"))
+        except:
+            pass
+        os.remove(SAFE_PATH)
+        return
+    else:
+        #try to find id oder systemcode
+        if "id" not in data["message"].keys() and "systemcode" not in data["message"].keys():
             try:
-                client_sock.send("no id or systemcode found".encode("UTF-8"))
+                client_sock.send("ERROR!\nInvalid protocol. No id or systemcode found.".encode("UTF-8"))
             except:
                 pass
-            os.remove(os.getcwd() + "/" + "tempdata.json")
+            os.remove(SAFE_PATH)
             return
+        elif "id" in data["message"].keys():
+            identity = "-i " + data["message"]["id"]
+        else:
+            identity = "-s " + data["message"]["systemcode"]
 
-    #try to find unitcode
-    try:
-        unitcode = "-u " + str(data["message"]["unit"])
-    except KeyError:
-        #errorhandling if no unitcode was found
-        try:
-            client_sock.send("no unitcode found".encode("UTF-8"))
-        except:
-            pass
-        os.remove(os.getcwd() + "/" + "tempdata.json")
-        return
+        if "unit" not in data["message"].keys():
+            try:
+                client_sock.send("ERROR!\nInvalid protocol. No unitcode found.".encode("UTF-8"))
+            except:
+                pass
+            os.remove(SAFE_PATH)
+            return
+        else:
+            unitcode = "-u " + str(data["message"]["unit"])
+
 
     #try to find protocol
-    try:
-        protocol = "-p " + data["protocol"]
-    except KeyError:
-        #errorhandling if no protocol was found
+    if "protocol" not in data.keys():
         try:
-            client_sock.send("no protocol found".encode("UTF-8"))
+            client_sock.send("ERROR!\nInvalid protocol. No protocol type found.".encode("UTF-8"))
         except:
             pass
-        os.remove(os.getcwd() + "/" + "tempdata.json")
+        os.remove(SAFE_PATH)
         return
+    else:
+        protocol = "-p " + data["protocol"] 
+
 
     sendstring = f"{identity} {unitcode} {protocol}"
     try:
         client_sock.send(sendstring.encode("UTF-8"))
     except:
         pass
-    os.remove(os.getcwd() + "/" + "tempdata.json")
+    os.remove(SAFE_PATH)
