@@ -39,9 +39,10 @@ def scan(client_sock):
             data = json.load(f)
     except:
         try:
-            client_sock.send("ERROR!\npilight received nothing".encode("UTF-8"))
+            client_sock.send("ERROR! pilight received nothing".encode("UTF-8"))
         except:
             pass
+        
         return
 
     identity = None
@@ -50,7 +51,7 @@ def scan(client_sock):
 
     if "message" not in data.keys():
         try:
-            client_sock.send("ERROR!\nInvalid protocol. No message section found.".encode("UTF-8"))
+            client_sock.send("ERROR! Invalid protocol. No message section found.".encode("UTF-8"))
         except:
             pass
         os.remove(SAFE_PATH)
@@ -59,19 +60,19 @@ def scan(client_sock):
         #try to find id oder systemcode
         if "id" not in data["message"].keys() and "systemcode" not in data["message"].keys():
             try:
-                client_sock.send("ERROR!\nInvalid protocol. No id or systemcode found.".encode("UTF-8"))
+                client_sock.send("ERROR! Invalid protocol. No id or systemcode found.".encode("UTF-8"))
             except:
                 pass
             os.remove(SAFE_PATH)
             return
         elif "id" in data["message"].keys():
-            identity = "-i " + data["message"]["id"]
+            identity = "-i " + str(data["message"]["id"])
         else:
-            identity = "-s " + data["message"]["systemcode"]
+            identity = "-s " + str(data["message"]["systemcode"])
 
         if "unit" not in data["message"].keys():
             try:
-                client_sock.send("ERROR!\nInvalid protocol. No unitcode found.".encode("UTF-8"))
+                client_sock.send("ERROR! Invalid protocol. No unitcode found.".encode("UTF-8"))
             except:
                 pass
             os.remove(SAFE_PATH)
@@ -83,7 +84,7 @@ def scan(client_sock):
     #try to find protocol
     if "protocol" not in data.keys():
         try:
-            client_sock.send("ERROR!\nInvalid protocol. No protocol type found.".encode("UTF-8"))
+            client_sock.send("ERROR! Invalid protocol. No protocol type found.".encode("UTF-8"))
         except:
             pass
         os.remove(SAFE_PATH)
