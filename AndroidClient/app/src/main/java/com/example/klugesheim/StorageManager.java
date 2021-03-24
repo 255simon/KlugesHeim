@@ -40,4 +40,10 @@ public class StorageManager {
         }
         return switchList;
     }
+
+    public void removeData(Switch s){
+        listElData.remove(s.getName() + "/" + s.getCommand());
+        editor.putStringSet(listElDataKey, listElData);
+        editor.apply();
+    }
 }

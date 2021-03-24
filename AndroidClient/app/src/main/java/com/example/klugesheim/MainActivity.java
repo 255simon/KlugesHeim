@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Switch> switchList;
     SwitchAdapter switchAdapter;
     SharedPreferences sharedPref;
-    HashSet<String> listElData;
     StorageManager storageManager;
 
     @Override
@@ -34,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.listview_activity_main);
         switchList = storageManager.loadData();
-        switchAdapter = new SwitchAdapter(getApplicationContext(), switchList);
+        switchAdapter = new SwitchAdapter(getApplicationContext(), switchList, storageManager);
         listView.setAdapter(switchAdapter);
 
         scanButton.setOnClickListener(new View.OnClickListener() {
